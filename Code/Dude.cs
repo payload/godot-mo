@@ -1,20 +1,68 @@
 using Godot;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+
+
+interface DudeTask {
+    bool Tick();
+}
+
+abstract class AbstractDudeTask : DudeTask {
+    IEnumerator<object> MyEnumerator;
+
+    protected AbstractDudeTask() {
+        MyEnumerator = Enumerator();
+    }
+
+    public bool Tick() {
+        return MyEnumerator.MoveNext();
+    }
+
+    abstract protected IEnumerator<object> Enumerator();
+}
+
+class RushAndShootTask : AbstractDudeTask {
+    public Vector3 dest;
+    public Node enemy;
+    public Dude dude;
+
+    override protected IEnumerator<object> Enumerator() {
+        while (!dude.Arrived(dest)) {
+            dude.MoveTo(dest);
+            dude.Shoot(enemy);
+            yield return null;
+        }
+        while (!dude.EnemyNotDead(enemy)) {
+            dude.Shoot(enemy);
+            yield return null;
+        }
+    }
+}
 
 public class Dude : RigidBody, Colorful
 {
     Vector3 Destination;
+    List<DudeTask> Tasks = new List<DudeTask>();
 
     public override void _Ready()
     {
         Destination = Translation;
-        SetMeta("Spatial", true);
-        SetMeta("Colorful", true);
+        Tasks.Add(new RushAndShootTask{
+            dude = this,
+            enemy = null,
+            dest = new Vector3(1,2,3)
+        });
     }
 
     public override void _Process(float delta)
     {
+        if (Tasks.Count > 0) {
+            if (!Tasks[0].Tick()) {
+                Tasks.RemoveAt(0);
+            }
+        }
+
         if (ToDestination().LengthSquared() < 0.1)
         {
             LinearDamp = 0.98F;
@@ -24,6 +72,24 @@ public class Dude : RigidBody, Colorful
         {
             LinearDamp = -1F;
         }
+    }
+
+    public bool Arrived(Vector3 dest) {
+        GD.Print("Arrived");
+        return true;
+    }
+
+    public void MoveTo(Vector3 dest) {
+        GD.Print("Move");
+    }
+
+    public bool EnemyNotDead(Node enemy) {
+        GD.Print("EnemyNotDead");
+        return true;
+    }
+
+    public void Shoot(Node enemy) {
+        GD.Print("Shoot");
     }
 
     Vector3 ToDestination() => Destination - Translation;
@@ -43,6 +109,8 @@ public class Dude : RigidBody, Colorful
         LookFollow(state, GetGlobalTransform(), Destination);
         ApplyCentralImpulse(ToDestination().Normalized() * state.GetStep());
     }
+
+    //
 
     MeshInstance GetMeshInstance() => GetNode<MeshInstance>("MeshInstance");
 
