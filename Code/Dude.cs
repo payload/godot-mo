@@ -22,19 +22,21 @@ abstract class AbstractDudeTask : DudeTask {
     abstract protected IEnumerator<object> Enumerator();
 }
 
-class RushAndShootTask : AbstractDudeTask {
+class MoveToTask : AbstractDudeTask {
     public Vector3 dest;
-    public Node enemy;
     public Dude dude;
 
     override protected IEnumerator<object> Enumerator() {
+        dude.LinearDamp = -1F;
+        
         while (!dude.Arrived(dest)) {
             dude.MoveTo(dest);
-            dude.Shoot(enemy);
             yield return null;
         }
-        while (!dude.EnemyNotDead(enemy)) {
-            dude.Shoot(enemy);
+
+        dude.LinearDamp = 0.98F;
+
+        while (dude.LinearVelocity.LengthSquared() > 0.1) {
             yield return null;
         }
     }
@@ -44,52 +46,38 @@ public class Dude : RigidBody, Colorful
 {
     Vector3 Destination;
     List<DudeTask> Tasks = new List<DudeTask>();
+    float Delta;
 
     public override void _Ready()
     {
         Destination = Translation;
-        Tasks.Add(new RushAndShootTask{
+        Tasks.Add(new MoveToTask{
             dude = this,
-            enemy = null,
-            dest = new Vector3(1,2,3)
+            dest = new Vector3(-2, 0, 1)
+        });
+        Tasks.Add(new MoveToTask{
+            dude = this,
+            dest = new Vector3(-2, 0, -2)
         });
     }
 
     public override void _Process(float delta)
     {
+        Delta = delta;
         if (Tasks.Count > 0) {
             if (!Tasks[0].Tick()) {
                 Tasks.RemoveAt(0);
             }
         }
-
-        if (ToDestination().LengthSquared() < 0.1)
-        {
-            LinearDamp = 0.98F;
-        }
-
-        if (LinearVelocity.LengthSquared() < 0.1)
-        {
-            LinearDamp = -1F;
-        }
     }
 
     public bool Arrived(Vector3 dest) {
-        GD.Print("Arrived");
-        return true;
+        return (dest - Translation).LengthSquared() < 0.1;
     }
 
     public void MoveTo(Vector3 dest) {
-        GD.Print("Move");
-    }
-
-    public bool EnemyNotDead(Node enemy) {
-        GD.Print("EnemyNotDead");
-        return true;
-    }
-
-    public void Shoot(Node enemy) {
-        GD.Print("Shoot");
+        ApplyCentralImpulse((dest - Translation).Normalized() * Delta);
+        // AddCentralForce((dest - Translation).Normalized());
     }
 
     Vector3 ToDestination() => Destination - Translation;
@@ -106,8 +94,7 @@ public class Dude : RigidBody, Colorful
 
     public override void _IntegrateForces(PhysicsDirectBodyState state)
     {
-        LookFollow(state, GetGlobalTransform(), Destination);
-        ApplyCentralImpulse(ToDestination().Normalized() * state.GetStep());
+        // LookFollow(state, Transform.Identity, GetLinearVelocity());
     }
 
     //
