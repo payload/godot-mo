@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -16,6 +17,7 @@ public interface DudeControl
     bool Stop();
     bool MoveTo(Vector3 pos);
     bool PickUp(GameItem item);
+    void AddDuty(Func<bool> func);
 }
 
 public interface GameItem
@@ -30,4 +32,8 @@ public interface GameItem
 public interface Duty
 {
     bool Tick();
+}
+
+public interface Factory {
+    void Produce();
 }

@@ -4,7 +4,6 @@
 
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.0
-rough = true
 
 [sub_resource type="CapsuleShape" id=2]
 radius = 0.2

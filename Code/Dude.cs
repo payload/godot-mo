@@ -11,8 +11,22 @@ class MoveToTask : AbstractDuty
 
     override protected IEnumerator<object> Enumerator()
     {
-        while (!dude.MoveTo(dest)) yield return null;
-        while (!dude.Stop()) yield return null;
+        while (!(dude.MoveTo(dest) && dude.Stop())) yield return null;
+    }
+}
+
+class SomeDuty : AbstractDuty
+{
+    private Func<bool> Func;
+
+    public SomeDuty(Func<bool> func)
+    {
+        Func = func;
+    }
+
+    override protected IEnumerator<object> Enumerator()
+    {
+        while (!Func()) yield return null;
     }
 }
 
@@ -25,9 +39,11 @@ public class Dude : RigidBody, Colorful, DudeControl
         Delta = delta;
         ProcessTask();
 
-        var visual = GetNode<Spatial>("Visual");
-        var angle = Mathf.Atan2(LinearVelocity.x, LinearVelocity.z);
-        visual.Rotation = new Vector3(0, angle, 0);
+        if (LinearVelocity.LengthSquared() > 0.01) {
+            var visual = GetNode<Spatial>("Visual");
+            var angle = Mathf.Atan2(LinearVelocity.x, LinearVelocity.z);
+            visual.Rotation = new Vector3(0, angle, 0);
+        }
     }
 
     void ProcessTask()
@@ -49,9 +65,15 @@ public class Dude : RigidBody, Colorful, DudeControl
 
     public bool MoveTo(Vector3 dest)
     {
-        LinearDamp = -1F;
-        ApplyCentralImpulse((dest - Translation).Normalized() * Delta);
-        return Translation.DistanceSquaredTo(dest) < 0.1;
+        var diff = dest - Translation;
+        var angle = LinearVelocity.AngleTo(diff);
+        var done = diff.LengthSquared() < 0.1;
+
+        LinearDamp = Mathf.Abs(angle) < 0.5 ? -1F : 0.98F;
+        if (!done) {
+            ApplyCentralImpulse(Vec.Clamp(dest - Translation, Delta));
+        }
+        return done;
     }
 
     public bool PickUp(GameItem item)
@@ -63,6 +85,11 @@ public class Dude : RigidBody, Colorful, DudeControl
             return true;
         }
         return false;
+    }
+
+    public void AddDuty(Func<bool> func)
+    {
+        Duties.Add(new SomeDuty(func));
     }
 
     // Colorful
@@ -84,5 +111,13 @@ public class Dude : RigidBody, Colorful, DudeControl
         SetColor(color);
         await ToSignal(GetTree().CreateTimer(seconds), "timeout");
         ResetColor();
+    }
+}
+
+public class Vec
+{
+    public static Vector3 Clamp(Vector3 vec, float length)
+    {
+        return vec.Length() > length ? vec.Normalized() * length : vec;
     }
 }

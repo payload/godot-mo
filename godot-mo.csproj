@@ -52,7 +52,7 @@
     <Compile Include="Code\Dude.cs" />
     <Compile Include="Code\FactorySimple.cs" />
     <Compile Include="Code\PlayerAgent.cs" />
-    <Compile Include="Code\SelectionControl.cs" />
+    <Compile Include="Code\ThingsHappen.cs" />
     <Compile Include="Code\Interfaces.cs" />
     <Compile Include="Code\HelperImplementations.cs" />
     <Compile Include="Code\MaterialCache.cs" />

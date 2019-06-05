@@ -5,7 +5,7 @@
 [ext_resource path="res://Code/FactorySimple.cs" type="Script" id=3]
 [ext_resource path="res://Scenes/GameItemBlock.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Code/PlayerAgent.cs" type="Script" id=5]
-[ext_resource path="res://Code/SelectionControl.cs" type="Script" id=6]
+[ext_resource path="res://Code/ThingsHappen.cs" type="Script" id=6]
 [ext_resource path="res://Code/Raycaster.cs" type="Script" id=7]
 
 [sub_resource type="Environment" id=1]
@@ -20,6 +20,7 @@ fov = 60.2
 size = 5.0
 
 [node name="Tiles" type="Node" parent="."]
+editor/display_folded = true
 
 [node name="FloorTile" parent="Tiles" instance=ExtResource( 1 )]
 
@@ -148,8 +149,8 @@ shadow_enabled = true
 [node name="PlayerAgent" type="Node" parent="."]
 script = ExtResource( 5 )
 
-[node name="SelectionControl" type="Spatial" parent="."]
+[node name="ThingsHappen" type="Spatial" parent="."]
 script = ExtResource( 6 )
 
-[node name="Raycaster" type="Spatial" parent="SelectionControl"]
+[node name="Raycaster" type="Spatial" parent="ThingsHappen"]
 script = ExtResource( 7 )

@@ -1,23 +1,33 @@
 using Godot;
 using System;
 
-public class FactorySimple : Spatial
+public class FactorySimple : Spatial, Factory
 {	
+    [Export]
+    NodePath Spawn = "Spawn";
+
+    [Export]
+    Resource Some;
+
+    [Export]
+    PackedScene SSSS;
+
+    [Export]
+    NodePath Dynamic = "../../Dynamic";
+
+    PackedScene Product; 
+
     public override void _Ready()
     {
-        var product = GD.Load<PackedScene>("res://Scenes/Dude.tscn");
-        var instance = product.Instance() as Spatial;
-
-        var spawn = GetNodeOrNull<Spatial>("Spawn");
-        if (spawn != null)
-        {
-            instance.Transform = spawn.GlobalTransform;
-        }
-
-        GetNode("/root/World/Dynamic").AddChild(instance);
+        Product = GD.Load<PackedScene>("res://Scenes/Dude.tscn");
+        Produce();
     }
 
-    public override void _Process(float delta)
-    {
+    public void Produce() {
+        var spawn = GetNode<Spatial>(Spawn);
+        var dynamic = GetNode(Dynamic);
+        var instance = Product.Instance() as Spatial;
+        instance.Transform = spawn.GlobalTransform;
+        dynamic.AddChild(instance);
     }
 }
