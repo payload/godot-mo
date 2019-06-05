@@ -54,6 +54,7 @@
     <Compile Include="Code\PlayerAgent.cs" />
     <Compile Include="Code\SelectionControl.cs" />
     <Compile Include="Code\Interfaces.cs" />
+    <Compile Include="Code\HelperImplementations.cs" />
     <Compile Include="Code\MaterialCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

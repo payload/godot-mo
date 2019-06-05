@@ -4,110 +4,79 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 
-interface DudeTask {
-    bool Tick();
-}
-
-abstract class AbstractDudeTask : DudeTask {
-    IEnumerator<object> MyEnumerator;
-
-    protected AbstractDudeTask() {
-        MyEnumerator = Enumerator();
-    }
-
-    public bool Tick() {
-        return MyEnumerator.MoveNext();
-    }
-
-    abstract protected IEnumerator<object> Enumerator();
-}
-
-class MoveToTask : AbstractDudeTask {
-    public Vector3 dest;
-    public Dude dude;
-
-    override protected IEnumerator<object> Enumerator() {
-        dude.LinearDamp = -1F;
-        
-        while (!dude.Arrived(dest)) {
-            dude.MoveTo(dest);
-            yield return null;
-        }
-
-        dude.LinearDamp = 0.98F;
-
-        while (dude.LinearVelocity.LengthSquared() > 0.1) {
-            yield return null;
-        }
-    }
-}
-
-public class Dude : RigidBody, Colorful
+class MoveToTask : AbstractDuty
 {
-    Vector3 Destination;
-    List<DudeTask> Tasks = new List<DudeTask>();
-    float Delta;
+    public Vector3 dest;
+    public DudeControl dude;
 
-    public override void _Ready()
+    override protected IEnumerator<object> Enumerator()
     {
-        Destination = Translation;
-        Tasks.Add(new MoveToTask{
-            dude = this,
-            dest = new Vector3(-2, 0, 1)
-        });
-        Tasks.Add(new MoveToTask{
-            dude = this,
-            dest = new Vector3(-2, 0, -2)
-        });
+        while (!dude.MoveTo(dest)) yield return null;
+        while (!dude.Stop()) yield return null;
     }
+}
+
+public class Dude : RigidBody, Colorful, DudeControl
+{
+    float Delta;
 
     public override void _Process(float delta)
     {
         Delta = delta;
-        if (Tasks.Count > 0) {
-            if (!Tasks[0].Tick()) {
-                Tasks.RemoveAt(0);
-            }
-        }
+        ProcessTask();
+
+        var visual = GetNode<Spatial>("Visual");
+        var angle = Mathf.Atan2(LinearVelocity.x, LinearVelocity.z);
+        visual.Rotation = new Vector3(0, angle, 0);
     }
 
-    public bool Arrived(Vector3 dest) {
-        return (dest - Translation).LengthSquared() < 0.1;
+    void ProcessTask()
+    {
+        if (Duties.Count > 0 && !Duties[0].Tick())
+            Duties.RemoveAt(0);
     }
 
-    public void MoveTo(Vector3 dest) {
+    // DudeControl
+
+    public List<Duty> Duties { get => duties; }
+    List<Duty> duties = new List<Duty>();
+
+    public bool Stop()
+    {
+        LinearDamp = 0.98F;
+        return LinearVelocity.LengthSquared() < 0.1;
+    }
+
+    public bool MoveTo(Vector3 dest)
+    {
+        LinearDamp = -1F;
         ApplyCentralImpulse((dest - Translation).Normalized() * Delta);
-        // AddCentralForce((dest - Translation).Normalized());
+        return Translation.DistanceSquaredTo(dest) < 0.1;
     }
 
-    Vector3 ToDestination() => Destination - Translation;
-
-    private void LookFollow(PhysicsDirectBodyState state, Transform currentTransform, Vector3 targetPosition)
+    public bool PickUp(GameItem item)
     {
-        var upDir = new Vector3(0, 1, 0);
-        var curDir = currentTransform.basis.Xform(new Vector3(0, 0, 1));
-        var targetDir = (targetPosition - currentTransform.origin).Normalized();
-        var rotationAngle = Mathf.Acos(curDir.x) - Mathf.Acos(targetDir.x);
-
-        state.SetAngularVelocity(upDir * (rotationAngle / state.GetStep()));
+        if (Translation.DistanceSquaredTo(item.Spatial.Translation) < 0.2)
+        {
+            AddChild(item.Spatial);
+            item.Spatial.Translation = Vector3.Forward;
+            return true;
+        }
+        return false;
     }
 
-    public override void _IntegrateForces(PhysicsDirectBodyState state)
-    {
-        // LookFollow(state, Transform.Identity, GetLinearVelocity());
-    }
+    // Colorful
 
-    //
-
-    MeshInstance GetMeshInstance() => GetNode<MeshInstance>("MeshInstance");
+    MeshInstance VisualBody { get => GetNode<MeshInstance>("Visual/Body"); }
 
     public void SetColor(Color color)
     {
-        GetMeshInstance().MaterialOverride = MaterialCache.FromColor(color);
+        VisualBody.MaterialOverride = MaterialCache.FromColor(color);
     }
 
-    public void ResetColor() {
-        GetMeshInstance().MaterialOverride = null;
+    public void ResetColor()
+    {
+        VisualBody.MaterialOverride = null;
     }
 
     public async Task ShortlySetColor(Color color, float seconds)
