@@ -56,6 +56,7 @@
     <Compile Include="Code\Interfaces.cs" />
     <Compile Include="Code\HelperImplementations.cs" />
     <Compile Include="Code\MaterialCache.cs" />
+    <Compile Include="Code\Raycaster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
