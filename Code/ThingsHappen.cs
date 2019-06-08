@@ -89,6 +89,9 @@ public class ThingsHappen : Spatial
                     if (IsModifier2())
                     {
                         GD.Print("DropItem!!");
+                        Selection.ForEach((dude) => dude.AddDuty(() =>
+                            dude.MoveTo(spatial.Translation) && dude.Stop() && dude.DropItem()
+                        ));
                     }
                     else
                     {

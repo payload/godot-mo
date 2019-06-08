@@ -17,6 +17,7 @@ public interface DudeControl
     bool Stop();
     bool MoveTo(Vector3 pos);
     bool PickUp(GameItem item);
+    bool DropItem();
     void AddDuty(Func<bool> func);
 }
 

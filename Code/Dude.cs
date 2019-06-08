@@ -39,7 +39,8 @@ public class Dude : RigidBody, Colorful, DudeControl
         Delta = delta;
         ProcessTask();
 
-        if (LinearVelocity.LengthSquared() > 0.01) {
+        if (LinearVelocity.LengthSquared() > 0.01)
+        {
             var visual = GetNode<Spatial>("Visual");
             var angle = Mathf.Atan2(LinearVelocity.x, LinearVelocity.z);
             visual.Rotation = new Vector3(0, angle, 0);
@@ -70,32 +71,55 @@ public class Dude : RigidBody, Colorful, DudeControl
         var done = diff.LengthSquared() < 0.1;
 
         LinearDamp = Mathf.Abs(angle) < 0.5 ? -1F : 0.98F;
-        if (!done) {
+        if (!done)
+        {
             ApplyCentralImpulse(Vec.Clamp(dest - Translation, Delta));
         }
         return done;
     }
 
-    int items = 0;
+    List<GameItem> inventory = new List<GameItem>();
 
     public bool PickUp(GameItem item)
     {
-        if (Translation.DistanceSquaredTo(item.Spatial.Translation) < 0.2)
+        var spatial = item.Spatial;
+        if (Translation.DistanceSquaredTo(spatial.Translation) < 0.2)
         {
             var hands = GetNode<Spatial>("Visual/Hands");
-            var items = hands.GetChildCount();
+            var owner = spatial.Owner;
 
-            var owner = item.Spatial.Owner;
-            item.Spatial.GetParent().RemoveChild(item.Spatial);
-            hands.AddChild(item.Spatial);
-            item.Spatial.Owner = owner;
-            
-            item.Spatial.Transform = Transform.Identity;
-            item.Spatial.Translate(new Vector3(0, items * 0.21F, 0));
+            spatial.GetParent().RemoveChild(spatial);
+            hands.AddChild(spatial);
+            inventory.Add(item);
+
+            spatial.Owner = owner;
+            spatial.Transform = Transform.Identity;
+
+            spatial.Translate(new Vector3(0, inventory.Count * 0.21F, 0));
 
             return true;
         }
         return false;
+    }
+
+
+    public bool DropItem()
+    {
+        if (inventory.Count > 0)
+        {
+            var item = inventory[inventory.Count - 1];
+            var spatial = item.Spatial;
+            var owner = spatial.Owner;
+
+            inventory.RemoveAt(inventory.Count - 1);
+            spatial.GetParent().RemoveChild(spatial);
+            GetParent().AddChild(spatial);
+
+            spatial.Owner = owner;
+            spatial.Translation = Translation;
+        }
+
+        return true;
     }
 
     public void AddDuty(Func<bool> func)
