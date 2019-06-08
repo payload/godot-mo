@@ -76,12 +76,23 @@ public class Dude : RigidBody, Colorful, DudeControl
         return done;
     }
 
+    int items = 0;
+
     public bool PickUp(GameItem item)
     {
         if (Translation.DistanceSquaredTo(item.Spatial.Translation) < 0.2)
         {
-            AddChild(item.Spatial);
-            item.Spatial.Translation = Vector3.Forward;
+            var hands = GetNode<Spatial>("Visual/Hands");
+            var items = hands.GetChildCount();
+
+            var owner = item.Spatial.Owner;
+            item.Spatial.GetParent().RemoveChild(item.Spatial);
+            hands.AddChild(item.Spatial);
+            item.Spatial.Owner = owner;
+            
+            item.Spatial.Transform = Transform.Identity;
+            item.Spatial.Translate(new Vector3(0, items * 0.21F, 0));
+
             return true;
         }
         return false;

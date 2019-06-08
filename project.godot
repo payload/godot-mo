@@ -19,6 +19,13 @@ config/name="godot-mo"
 run/main_scene="res://Scenes/World.tscn"
 config/icon="res://icon.png"
 
+[layer_names]
+
+3d_physics/layer_1="ground"
+3d_physics/layer_2="dudes"
+3d_physics/layer_3="stuff"
+3d_physics/layer_4="game_items"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

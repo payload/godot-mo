@@ -35,11 +35,8 @@ public class ThingsHappen : Spatial
         DoSecondaryAction(node);
     }
 
-    private bool IsModifier()
-    {
-        return Input.IsKeyPressed((int)KeyList.Shift);
-    }
-
+    private bool IsModifier1() => Input.IsKeyPressed((int)KeyList.Shift);
+    private bool IsModifier2() => Input.IsKeyPressed((int)KeyList.Control);
 
     //
 
@@ -49,14 +46,14 @@ public class ThingsHappen : Spatial
     {
         if (node is DudeControl dude)
         {
-            if (!IsModifier()) DeselectAll();
+            if (!IsModifier1()) DeselectAll();
 
             SelectDude(dude);
             Selection.Add(dude);
         }
         else
         {
-            if (!IsModifier()) DeselectAll();
+            if (!IsModifier1()) DeselectAll();
         }
 
         if (node is Factory factory)
@@ -65,20 +62,42 @@ public class ThingsHappen : Spatial
         }
     }
 
+    //
+
     private void DoSecondaryAction(Node node)
     {
         if (Selection.Count > 0)
         {
-            if (!IsModifier())
+            if (!IsModifier1())
             {
                 Selection.ForEach((dude) => dude.Duties.Clear());
             }
 
-            if (node is Spatial spatial)
+            switch (node)
             {
-                Selection.ForEach((dude) => dude.AddDuty(() =>
-                    dude.MoveTo(spatial.Translation) && dude.Stop()
-                ));
+                case DudeControl dude:
+                    break;
+                case Factory factory:
+                    break;
+                case GameItem item:
+                    GD.Print("PickUp!!");
+                    Selection.ForEach((dude) => dude.AddDuty(() =>
+                        dude.MoveTo(item.Spatial.Translation) && dude.Stop() && dude.PickUp(item)
+                    ));
+                    break;
+                case Spatial spatial:
+                    if (IsModifier2())
+                    {
+                        GD.Print("DropItem!!");
+                    }
+                    else
+                    {
+                        GD.Print("MoveTo!!");
+                        Selection.ForEach((dude) => dude.AddDuty(() =>
+                            dude.MoveTo(spatial.Translation) && dude.Stop()
+                        ));
+                    }
+                    break;
             }
         }
     }
