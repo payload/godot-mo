@@ -25,14 +25,14 @@ public class ThingsHappen : Spatial
 
     private async void PrimaryActionThroughCamera(Vector2 pos)
     {
-        var node = await RaycastThroughCamera(pos);
-        DoPrimaryAction(node);
+        var raycast = await RaycastThroughCamera(pos);
+        DoPrimaryAction(raycast);
     }
 
     private async void SecondaryActionThroughCamera(Vector2 pos)
     {
-        var node = await RaycastThroughCamera(pos);
-        DoSecondaryAction(node);
+        var raycast = await RaycastThroughCamera(pos);
+        DoSecondaryAction(raycast);
     }
 
     private bool IsModifier1() => Input.IsKeyPressed((int)KeyList.Shift);
@@ -42,8 +42,10 @@ public class ThingsHappen : Spatial
 
     private List<DudeControl> Selection = new List<DudeControl>();
 
-    private void DoPrimaryAction(Node node)
+    private void DoPrimaryAction(RaycastResponse raycast)
     {
+        var node = raycast.collider;
+
         if (node is DudeControl dude)
         {
             if (!IsModifier1()) DeselectAll();
@@ -64,8 +66,10 @@ public class ThingsHappen : Spatial
 
     //
 
-    private void DoSecondaryAction(Node node)
+    private void DoSecondaryAction(RaycastResponse raycast)
     {
+        var node = raycast.collider;
+
         if (Selection.Count > 0)
         {
             if (!IsModifier1())
@@ -90,14 +94,14 @@ public class ThingsHappen : Spatial
                     {
                         GD.Print("DropItem!!");
                         Selection.ForEach((dude) => dude.AddDuty(() =>
-                            dude.MoveTo(spatial.Translation) && dude.Stop() && dude.DropItem()
+                            dude.MoveTo(raycast.position) && dude.Stop() && dude.DropItem()
                         ));
                     }
                     else
                     {
                         GD.Print("MoveTo!!");
                         Selection.ForEach((dude) => dude.AddDuty(() =>
-                            dude.MoveTo(spatial.Translation) && dude.Stop()
+                            dude.MoveTo(raycast.position) && dude.Stop()
                         ));
                     }
                     break;
@@ -107,7 +111,7 @@ public class ThingsHappen : Spatial
 
     //
 
-    private async Task<Node> RaycastThroughCamera(Vector2 pos)
+    private async Task<RaycastResponse> RaycastThroughCamera(Vector2 pos)
     {
         var camera = GetNode<Camera>(Camera);
         var raycaster = GetNode<Raycaster>(Raycaster);

@@ -6,17 +6,17 @@ struct Raycast
 {
     public Vector3 From;
     public Vector3 To;
-    public TaskCompletionSource<Node> Promise;
+    public TaskCompletionSource<RaycastResponse> Promise;
 }
 
 struct RaycastResponse
 {
-    Node collider;
-    int collider_id;
-    Vector3 normal;
-    Vector3 position;
-    RID rid;
-    int shade;
+    public Node collider;
+    public int collider_id;
+    public Vector3 normal;
+    public Vector3 position;
+    public RID rid;
+    public int shape;
 }
 
 class Raycaster : Spatial
@@ -24,16 +24,16 @@ class Raycaster : Spatial
     private const float rayLength = 1000;
     private List<Raycast> raycasts = new List<Raycast>();
 
-    public Task<Node> CastTo(Vector3 from, Vector3 to)
+    public Task<RaycastResponse> CastTo(Vector3 from, Vector3 to)
     {
-        var promise = new TaskCompletionSource<Node>();
+        var promise = new TaskCompletionSource<RaycastResponse>();
         Task.Delay(1000).ContinueWith((Task task) => promise.TrySetCanceled());
 
         raycasts.Add(new Raycast { From = from, To = to, Promise = promise });
         return promise.Task;
     }
 
-    public Task<Node> Cast(Vector3 from, Vector3 direction)
+    public Task<RaycastResponse> Cast(Vector3 from, Vector3 direction)
     {
         return CastTo(from, from + direction * rayLength);
     }
@@ -46,15 +46,22 @@ class Raycaster : Spatial
         foreach (var raycast in raycasts)
         {
             var result = spaceState.IntersectRay(raycast.From, raycast.To);
+            var response = new RaycastResponse();
 
             if (result.ContainsKey("collider") && result["collider"] is Node node)
-            {
-                raycast.Promise.SetResult(node);
-            }
-            else
-            {
-                raycast.Promise.SetResult(null);
-            }
+                response.collider = node;
+            if (result.ContainsKey("collider_id") && result["collider_id"] is int collider_id)
+                response.collider_id = collider_id;
+            if (result.ContainsKey("normal") && result["normal"] is Vector3 normal)
+                response.normal = normal;
+            if (result.ContainsKey("position") && result["position"] is Vector3 position)
+                response.position = position;
+            if (result.ContainsKey("rid") && result["rid"] is RID rid)
+                response.rid = rid;
+            if (result.ContainsKey("shape") && result["shape"] is int shape)
+                response.shape = shape;
+
+            raycast.Promise.SetResult(response);
         }
 
         raycasts.Clear();
