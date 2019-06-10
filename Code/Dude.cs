@@ -60,12 +60,14 @@ public class Dude : RigidBody, Colorful, DudeControl
 
     public bool Stop()
     {
+        GD.Print("Stop");
         LinearDamp = 0.98F;
         return LinearVelocity.LengthSquared() < 0.1;
     }
 
     public bool MoveTo(Vector3 dest)
     {
+        GD.Print("MoveTo");
         var diff = dest - Translation;
         var angle = LinearVelocity.AngleTo(diff);
         var done = diff.LengthSquared() < 0.1;
@@ -90,12 +92,12 @@ public class Dude : RigidBody, Colorful, DudeControl
 
             spatial.GetParent().RemoveChild(spatial);
             hands.AddChild(spatial);
-            inventory.Add(item);
 
             spatial.Owner = owner;
             spatial.Transform = Transform.Identity;
 
             spatial.Translate(new Vector3(0, inventory.Count * 0.21F, 0));
+            inventory.Add(item);
 
             return true;
         }
@@ -122,10 +124,8 @@ public class Dude : RigidBody, Colorful, DudeControl
         return true;
     }
 
-    public void AddDuty(Func<bool> func)
-    {
-        Duties.Add(new SomeDuty(func));
-    }
+    public void AddDuty(Func<bool> func) => AddDuty(new SomeDuty(func));
+    public void AddDuty(Duty duty) => Duties.Add(duty);
 
     // Colorful
 

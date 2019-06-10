@@ -19,6 +19,7 @@ public interface DudeControl
     bool PickUp(GameItem item);
     bool DropItem();
     void AddDuty(Func<bool> func);
+    void AddDuty(Duty duty);
 }
 
 public interface GameItem
@@ -35,6 +36,26 @@ public interface Duty
     bool Tick();
 }
 
-public interface Factory {
+public interface Factory
+{
     void Produce();
+}
+
+public interface Actionable
+{
+    Action[] GetActions();
+}
+
+public interface Block
+{
+    Spatial Spatial { get; }
+    Transform ConstructionPoint { get; }
+    BlockKind Kind { get; }
+}
+
+public enum BlockKind { Undefined, Coal, Iron, Wood }
+
+public interface Construction
+{
+    PackedScene Scene { get; }
 }

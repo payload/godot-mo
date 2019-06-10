@@ -49,6 +49,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\CoalBlock.cs" />
     <Compile Include="Code\Dude.cs" />
     <Compile Include="Code\FactorySimple.cs" />
     <Compile Include="Code\GameItemBlock.cs" />
