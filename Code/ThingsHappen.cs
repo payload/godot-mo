@@ -13,7 +13,7 @@ public class ThingsHappen : Spatial
     [Export]
     NodePath Camera = "../Camera";
 
-    public override void _Input(InputEvent @event)
+    public override void _UnhandledInput(InputEvent @event)
     {
         if (@event is InputEventMouseButton eventMouseButton)
             OnMouseClick(eventMouseButton);
