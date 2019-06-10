@@ -33,109 +33,51 @@ public class ThingsHappen : Spatial
         var leftDblClick = mouse.IsPressed() && mouse.ButtonIndex == 1 && mouse.Doubleclick;
         var rightClick = mouse.IsPressed() && mouse.ButtonIndex == 2 && !mouse.Doubleclick;
         var rightDblClick = mouse.IsPressed() && mouse.ButtonIndex == 2 && mouse.Doubleclick;
-        var pos = mouse.Position;
-        var raycast = await RaycastThroughCamera(pos);
+        var mousePos = mouse.Position;
+        var raycast = await RaycastThroughCamera(mousePos);
+        var shift = Input.IsKeyPressed((int)KeyList.Shift);
+        var ctrl = Input.IsKeyPressed((int)KeyList.Control);
+        var collider = raycast.collider;
+        var pos = raycast.position;
+        var dude = collider as DudeControl;
+        var factory = collider as FactorySimple;
+        var item = collider as GameItem;
+        var just_floor = dude == null && factory == null && item == null;
+        var selected = Selection.Count > 0;
 
-        if (leftClick) DoPrimaryAction(raycast);
-        if (rightClick) DoSecondaryAction(pos, raycast);
-    }
-
-
-    private bool IsModifier1() => Input.IsKeyPressed((int)KeyList.Shift);
-    private bool IsModifier2() => Input.IsKeyPressed((int)KeyList.Control);
-
-    //
-
-    private List<DudeControl> Selection = new List<DudeControl>();
-
-    private void DoPrimaryAction(RaycastResponse raycast)
-    {
-        var node = raycast.collider;
-
-        if (node is DudeControl dude)
-        {
-            if (!IsModifier1()) DeselectAll();
-
+        if (leftClick && !shift && dude != null)
+            SelectOnly(dude);
+        if (leftClick && shift && dude != null)
             SelectDude(dude);
-            Selection.Add(dude);
-        }
-        else
-        {
-            if (!IsModifier1()) DeselectAll();
-        }
-
-        if (node is Factory factory)
-        {
+        if (leftClick && !shift && dude == null)
+            DeselectAll();
+        if (leftClick && factory != null)
             factory.Produce();
-        }
+        if (rightClick && selected && !shift)
+            SelectionClearDuties();
+        if (rightClick && selected && just_floor)
+            SelectionMoveTo(pos);
+        if (rightClick && selected && item != null)
+            SelectionMoveToAnd(pos, (d) => d.PickUp(item));
+        if (rightClick && ctrl && selected && just_floor)
+            SelectionMoveToAnd(pos, (d) => d.DropItem());
     }
 
-    //
+    private void SelectionClearDuties() => 
+        Selection.ForEach((dude) => dude.Duties.Clear());
+
+    private void SelectionMoveTo(Vector3 pos) =>
+        SelectionAddDuty((dude) => dude.MoveTo(pos) && dude.Stop());
+
+    private void SelectionAddDuty(Func<DudeControl, bool> func) =>
+        Selection.ForEach((dude) => dude.AddDuty(() => func(dude)));
+
+    private void SelectionMoveToAnd(Vector3 pos, Func<DudeControl, bool> func) {
+        SelectionMoveTo(pos);
+        SelectionAddDuty(func);
+    }
 
     Action[] SelectableActions;
-
-    private void DoSecondaryAction(Vector2 mousePos, RaycastResponse raycast)
-    {
-        var node = raycast.collider;
-
-        var assignment = WantToConstructOnBlock(raycast);
-        if (assignment != null)
-        {
-            if (!IsModifier1())
-                assignment.Dude.Duties.Clear();
-            assignment.Dude.AddDuty(assignment.Duty);
-            GD.Print("Jaja");
-        }
-        else if (Selection.Count > 0)
-        {
-            if (!IsModifier1())
-            {
-                Selection.ForEach((dude) => dude.Duties.Clear());
-            }
-
-            switch (node)
-            {
-                case DudeControl dude:
-                    break;
-                case Factory factory:
-                    break;
-                case GameItem item:
-                    GD.Print("PickUp!!");
-                    Selection.ForEach((dude) => dude.AddDuty(() =>
-                        dude.MoveTo(item.Spatial.Translation) && dude.Stop() && dude.PickUp(item)
-                    ));
-                    break;
-                case Spatial spatial:
-                    if (IsModifier2())
-                    {
-                        GD.Print("DropItem!!");
-                        Selection.ForEach((dude) => dude.AddDuty(() =>
-                            dude.MoveTo(raycast.position) && dude.Stop() && dude.DropItem()
-                        ));
-                    }
-                    else
-                    {
-                        GD.Print("MoveTo!!");
-                        Selection.ForEach((dude) => dude.AddDuty(() =>
-                            dude.MoveTo(raycast.position) && dude.Stop()
-                        ));
-                    }
-                    break;
-            }
-        }
-        else
-        {
-            switch (node)
-            {
-                case Actionable actionable:
-                    SelectableActions = actionable.GetActions();
-                    ShowSelectableActions(mousePos);
-                    break;
-            }
-        }
-    }
-
-    //
 
     private void ShowSelectableActions(Vector2 mousePos)
     {
@@ -168,10 +110,20 @@ public class ThingsHappen : Spatial
         return await raycaster.Cast(from, direction);
     }
 
+    private List<DudeControl> Selection = new List<DudeControl>();
+
+    private void SelectOnly(DudeControl dude)
+    {
+        DeselectAll();
+        SelectDude(dude);
+    }
+
     private void SelectDude(DudeControl dude)
     {
         if (dude is Colorful colorful)
             colorful.SetColor(Colors.Gold);
+
+        Selection.Add(dude);
     }
 
     private void DeselectDude(DudeControl dude)
@@ -228,7 +180,6 @@ public class ThingsHappen : Spatial
 
     private T InstantiateAt<T>(Transform place, PackedScene scene, Node parent) where T : Spatial
     {
-        GD.Print("Inst");
         var instance = scene.Instance() as T;
         instance.Transform = place;
         parent.AddChild(instance);

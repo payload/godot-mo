@@ -60,14 +60,12 @@ public class Dude : RigidBody, Colorful, DudeControl
 
     public bool Stop()
     {
-        GD.Print("Stop");
         LinearDamp = 0.98F;
         return LinearVelocity.LengthSquared() < 0.1;
     }
 
     public bool MoveTo(Vector3 dest)
     {
-        GD.Print("MoveTo");
         var diff = dest - Translation;
         var angle = LinearVelocity.AngleTo(diff);
         var done = diff.LengthSquared() < 0.1;
