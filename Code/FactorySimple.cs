@@ -28,6 +28,7 @@ public class FactorySimple : Spatial, Factory
         var dynamic = GetNode(Dynamic);
         var instance = Product.Instance() as Spatial;
         instance.Transform = spawn.GlobalTransform;
+        instance.AddToGroup("Dudes", true);
         dynamic.AddChild(instance);
     }
 }

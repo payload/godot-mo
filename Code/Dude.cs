@@ -30,7 +30,7 @@ class SomeDuty : AbstractDuty
     }
 }
 
-public class Dude : RigidBody, Colorful, DudeControl
+public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
 {
     float Delta;
 
@@ -145,6 +145,10 @@ public class Dude : RigidBody, Colorful, DudeControl
         await ToSignal(GetTree().CreateTimer(seconds), "timeout");
         ResetColor();
     }
+
+    // HasVisibilityNotifier
+
+    public VisibilityNotifier VisibilityNotifier => GetNode<VisibilityNotifier>("VisibilityNotifier");
 }
 
 public class Vec

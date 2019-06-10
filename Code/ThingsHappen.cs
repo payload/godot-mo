@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
 
 public class ThingsHappen : Spatial
 {
@@ -51,6 +52,8 @@ public class ThingsHappen : Spatial
             SelectDude(dude);
         if (leftClick && !shift && dude == null)
             DeselectAll();
+        if (leftDblClick && dude != null)
+            SelectAllDudesHere();
         if (leftClick && factory != null)
             factory.Produce();
         if (rightClick && selected && !shift)
@@ -61,6 +64,18 @@ public class ThingsHappen : Spatial
             SelectionMoveToAnd(pos, (d) => d.PickUp(item));
         if (rightClick && ctrl && selected && just_floor)
             SelectionMoveToAnd(pos, (d) => d.DropItem());
+    }
+
+    private void SelectAllDudesHere() {
+        var dudes = from node in GetTree().GetNodesInGroup("Dudes")
+			let dude = node as DudeControl
+            let visi = node as HasVisibilityNotifier
+            where visi != null && visi.VisibilityNotifier.IsOnScreen()
+            select dude;
+
+        Selection.Clear();
+        foreach (var dude in dudes)
+            SelectDude(dude);
     }
 
     private void SelectionClearDuties() => 

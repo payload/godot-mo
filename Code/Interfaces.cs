@@ -22,6 +22,11 @@ public interface DudeControl
     void AddDuty(Duty duty);
 }
 
+public interface HasVisibilityNotifier
+{
+    VisibilityNotifier VisibilityNotifier { get; }
+}
+
 public interface GameItem
 {
     Spatial Spatial { get; }
