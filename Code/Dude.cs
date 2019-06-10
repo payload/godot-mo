@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -19,8 +20,9 @@ class SomeDuty : AbstractDuty
 {
     private Func<bool> Func;
 
-    public SomeDuty(Func<bool> func)
+    public SomeDuty(string name, Func<bool> func)
     {
+        Name = name;
         Func = func;
     }
 
@@ -30,9 +32,12 @@ class SomeDuty : AbstractDuty
     }
 }
 
-public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
+public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier, Container
 {
     float Delta;
+    Duty CurrentDuty;
+
+    public Spatial Spatial => this;
 
     public override void _Process(float delta)
     {
@@ -49,8 +54,19 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
 
     void ProcessTask()
     {
-        if (Duties.Count > 0 && !Duties[0].Tick())
+        if (Duties.Count > 0 && !GetCurrentDuty().Tick())
             Duties.RemoveAt(0);
+    }
+
+    private Duty GetCurrentDuty()
+    {
+        if (Duties.Count > 0 && Duties[0] != CurrentDuty)
+        {
+            CurrentDuty = Duties[0];
+            GD.Print(this.Name, " -> ", CurrentDuty.Name);
+        }
+
+        return CurrentDuty;
     }
 
     // DudeControl
@@ -64,11 +80,11 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
         return LinearVelocity.LengthSquared() < 0.1;
     }
 
-    public bool MoveTo(Vector3 dest)
+    public bool MoveTo(Vector3 dest, float margin = 0.1F)
     {
         var diff = dest - Translation;
         var angle = LinearVelocity.AngleTo(diff);
-        var done = diff.LengthSquared() < 0.1;
+        var done = diff.LengthSquared() < margin;
 
         LinearDamp = Mathf.Abs(angle) < 0.5 ? -1F : 0.98F;
         if (!done)
@@ -78,7 +94,8 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
         return done;
     }
 
-    List<GameItem> inventory = new List<GameItem>();
+    private List<GameItem> inventory = new List<GameItem>();
+    public List<GameItem> Items => inventory;
 
     public bool PickUp(GameItem item)
     {
@@ -122,9 +139,9 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
         return true;
     }
 
-    public void AddDuty(Func<bool> func) => AddDuty(new SomeDuty(func));
+    public void AddDuty(string name, Func<bool> func) => AddDuty(new SomeDuty(name, func));
     public void AddDuty(Duty duty) => Duties.Add(duty);
-    private Assignment CreateAssignment(string name, Func<bool> func) => new SomeAssignment(name, () => AddDuty(func));
+    private Assignment CreateAssignment(string name, Func<bool> func) => new SomeAssignment(name, () => AddDuty(name, func));
 
     public Assignment GetDefaultAssignment(List<Assignment> assignments)
     {
@@ -136,18 +153,67 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
         var assignments = new List<Assignment>();
         var pos = raycast.position;
         var block = raycast.collider as Block;
+        var container = raycast.collider as Container;
+
+        assignments.Add(CreateAssignment("Move", () => MoveTo(pos) && Stop()));
 
         if (block != null)
             assignments.AddRange(GetBuildOnBlockAssignments(block));
-        
-        assignments.Add(CreateAssignment("Move", () => MoveTo(pos) && Stop()));
-        
+        if (container != null)
+            assignments.AddRange(GetContainerAssignments(container));
+
         return assignments;
     }
 
     //
 
-    private IEnumerable<Assignment> GetBuildOnBlockAssignments(Block block) {
+    private IEnumerable<Assignment> GetContainerAssignments(Container container)
+    {
+        foreach (var item in container.Items)
+        {
+            if (item == null) continue;
+            yield return CreateAssignment(
+                "Take " + item.Name,
+                () => TakeItem(container, item)
+            );
+        }
+
+        foreach (var item in inventory)
+        {
+            if (item == null) continue;
+            yield return CreateAssignment(
+                "Put " + item.Name,
+                () => PutItem(container, item)
+            );
+        }
+    }
+
+    public bool TakeItem(GameItem item) => inventory.Remove(item);
+    public bool PutItem(GameItem item)
+    {
+        inventory.Add(item);
+        return true;
+    }
+
+    private bool TransferItem(Container from, Container to, GameItem item)
+    {
+        return from.TakeItem(item) && to.PutItem(item);
+    }
+
+    private bool TakeItem(Container container, GameItem item) =>
+        MoveTo(container.Spatial.Translation, 2F) &&
+        Stop() &&
+        TransferItem(container, this, item);
+
+    private bool PutItem(Container container, GameItem item) =>
+        MoveTo(container.Spatial.Translation, 1.2F) &&
+        Stop() &&
+        TransferItem(this, container, item);
+
+    //
+
+    private IEnumerable<Assignment> GetBuildOnBlockAssignments(Block block)
+    {
         foreach (var building in block.PossibleBuildings)
         {
             if (building == null) continue;
@@ -159,7 +225,7 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
     }
 
     private bool BuildOnBlock(Block block, Resource building) =>
-        MoveTo(block.ConstructionPoint.origin) &&
+        MoveTo(block.ConstructionPoint.origin, 1.2F) &&
         Stop() &&
         ThingsHappen.InstantiateAt(block.ConstructionPoint, building, GetParent()) != null;
 

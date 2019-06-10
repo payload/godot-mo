@@ -1,4 +1,6 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Code/Drill.cs" type="Script" id=1]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0.439216, 0.313726, 0.690196, 1 )
@@ -46,6 +48,7 @@ height = 0.5
 
 [node name="Drill" type="RigidBody"]
 mode = 1
+script = ExtResource( 1 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( -0.893399, -3.9276e-08, 0.449265, 0, -1, -8.74228e-08, 0.449265, -7.81034e-08, 0.893399, 0, 0.244916, 0 )
@@ -59,3 +62,8 @@ anims/Drilling = SubResource( 3 )
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0 )
 shape = SubResource( 4 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

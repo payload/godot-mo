@@ -1,13 +1,18 @@
 using System.Collections.Generic;
 
-abstract class AbstractDuty : Duty {
+abstract class AbstractDuty : Duty
+{
     IEnumerator<object> MyEnumerator;
 
-    protected AbstractDuty() {
+    public string Name { get; set; }
+
+    protected AbstractDuty()
+    {
         MyEnumerator = Enumerator();
     }
 
-    public bool Tick() {
+    public bool Tick()
+    {
         return MyEnumerator.MoveNext();
     }
 

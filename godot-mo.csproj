@@ -50,9 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Code\CoalBlock.cs" />
+    <Compile Include="Code\Drill.cs" />
     <Compile Include="Code\Dude.cs" />
     <Compile Include="Code\FactorySimple.cs" />
     <Compile Include="Code\GameItemBlock.cs" />
+    <Compile Include="Code\SomeItem.cs" />
     <Compile Include="Code\PlayerAgent.cs" />
     <Compile Include="Code\RtsCamera.cs" />
     <Compile Include="Code\SomeBlock.cs" />

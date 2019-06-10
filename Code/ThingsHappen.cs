@@ -59,40 +59,42 @@ public class ThingsHappen : Spatial
             factory.Produce();
         if (rightClick && selected && !shift)
             SelectionClearDuties();
-        if (rightClick && selected && just_floor)
-            SelectionMoveTo(pos);
+        // if (rightClick && selected && just_floor)
+        //    SelectionMoveTo(pos);
         if (rightClick && selected && item != null)
-            SelectionMoveToAnd(pos, (d) => d.PickUp(item));
+            SelectionMoveToAnd(pos, "Pick up", (d) => d.PickUp(item));
         if (rightClick && ctrl && selected && just_floor)
-            SelectionMoveToAnd(pos, (d) => d.DropItem());
-        if (rightClick && Selection.Count == 1 && block != null)
+            SelectionMoveToAnd(pos, "Drop item", (d) => d.DropItem());
+        if (rightClick && Selection.Count == 1)
             ShowPossibleAssignements(mousePos, raycast);
     }
 
-    private void SelectAllDudesHere() {
+    private void SelectAllDudesHere()
+    {
         var dudes = from node in GetTree().GetNodesInGroup("Dudes")
-			let dude = node as DudeControl
-            let visi = node as HasVisibilityNotifier
-            where visi != null && visi.VisibilityNotifier.IsOnScreen()
-            select dude;
+                    let dude = node as DudeControl
+                    let visi = node as HasVisibilityNotifier
+                    where visi != null && visi.VisibilityNotifier.IsOnScreen()
+                    select dude;
 
         Selection.Clear();
         foreach (var dude in dudes)
             SelectDude(dude);
     }
 
-    private void SelectionClearDuties() => 
+    private void SelectionClearDuties() =>
         Selection.ForEach((dude) => dude.Duties.Clear());
 
     private void SelectionMoveTo(Vector3 pos) =>
-        SelectionAddDuty((dude) => dude.MoveTo(pos) && dude.Stop());
+        SelectionAddDuty("Move", (dude) => dude.MoveTo(pos) && dude.Stop());
 
-    private void SelectionAddDuty(Func<DudeControl, bool> func) =>
-        Selection.ForEach((dude) => dude.AddDuty(() => func(dude)));
+    private void SelectionAddDuty(string name, Func<DudeControl, bool> func) =>
+        Selection.ForEach((dude) => dude.AddDuty(name, () => func(dude)));
 
-    private void SelectionMoveToAnd(Vector3 pos, Func<DudeControl, bool> func) {
+    private void SelectionMoveToAnd(Vector3 pos, string name, Func<DudeControl, bool> func)
+    {
         SelectionMoveTo(pos);
-        SelectionAddDuty(func);
+        SelectionAddDuty(name, func);
     }
 
     //
@@ -123,6 +125,8 @@ public class ThingsHappen : Spatial
         var list = GetNodeOrNull<ItemList>("/root/World/SelectableActions");
 
         list.Visible = false;
+
+        GD.Print("Assignment ", Assignments[index].Name);
 
         Assignments[index].Assign();
     }

@@ -16,10 +16,10 @@ public interface DudeControl
     List<Duty> Duties { get; }
 
     bool Stop();
-    bool MoveTo(Vector3 pos);
+    bool MoveTo(Vector3 pos, float margin = 0.1F);
     bool PickUp(GameItem item);
     bool DropItem();
-    void AddDuty(Func<bool> func);
+    void AddDuty(string name, Func<bool> func);
     void AddDuty(Duty duty);
 
     Assignment GetDefaultAssignment(List<Assignment> assignments);
@@ -34,25 +34,30 @@ public interface HasVisibilityNotifier
 public interface GameItem
 {
     Spatial Spatial { get; }
-
     int Amount { get; }
+    string Name { get; }
 
     GameItem Combine(GameItem item);
 }
 
+public interface Container
+{
+    Spatial Spatial { get; }
+    List<GameItem> Items { get; }
+
+    bool TakeItem(GameItem item);
+    bool PutItem(GameItem item);
+}
+
 public interface Duty
 {
+    string Name { get; }
     bool Tick();
 }
 
 public interface Factory
 {
     void Produce();
-}
-
-public interface Actionable
-{
-    Action[] GetActions();
 }
 
 public interface Block
@@ -65,14 +70,9 @@ public interface Block
 
 public enum BlockKind { Undefined, Coal, Iron, Wood }
 
-public interface Construction
-{
-    PackedScene Scene { get; }
-}
-
 public interface Assignment
 {
     string Name { get; }
-    
+
     void Assign();
 }
