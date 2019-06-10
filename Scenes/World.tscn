@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Code/RtsCamera.cs" type="Script" id=1]
 [ext_resource path="res://Scenes/Factory.tscn" type="PackedScene" id=2]
@@ -8,10 +8,8 @@
 [ext_resource path="res://Code/PlayerAgent.cs" type="Script" id=6]
 [ext_resource path="res://Code/ThingsHappen.cs" type="Script" id=7]
 [ext_resource path="res://Code/Raycaster.cs" type="Script" id=8]
-[ext_resource path="res://Scenes/Block.tscn" type="PackedScene" id=9]
-[ext_resource path="res://Materials/ColorViolet.tres" type="Material" id=10]
-[ext_resource path="res://Scenes/Blocks/CoalBlock.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Scenes/Blocks/SomeBlock.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Scenes/Blocks/CoalBlock.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Scenes/Blocks/SomeBlock.tscn" type="PackedScene" id=10]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 50, 0.1, 50 )
@@ -77,134 +75,19 @@ script = ExtResource( 8 )
 
 [node name="Blocks" type="Node" parent="."]
 
-[node name="Block2" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4 )
-
-[node name="Block3" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -4 )
-
-[node name="Block4" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -4 )
-material = ExtResource( 10 )
-
-[node name="Block5" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4 )
-
-[node name="Block6" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -4 )
-
-[node name="Block7" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -4 )
-
-[node name="Block8" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -4 )
-
-[node name="Block17" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -4 )
-
-[node name="Block18" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, -4 )
-
-[node name="Block19" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -4 )
-
-[node name="Block20" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, -4 )
-material = ExtResource( 10 )
-
-[node name="Block21" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, -4 )
-
-[node name="Block22" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1, -4 )
-
-[node name="Block23" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2, -4 )
-
-[node name="Block33" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 3, -4 )
-
-[node name="Block24" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2, -4 )
-
-[node name="Block25" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2, -4 )
-
-[node name="Block26" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -4 )
-material = ExtResource( 10 )
-
-[node name="Block9" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -1, -4 )
-
-[node name="Block10" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -1, -4 )
-
-[node name="Block28" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -1, 0 )
-
-[node name="Block29" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, 0 )
-
-[node name="Block30" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -1, 0 )
-
-[node name="Block31" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -1, 1 )
-
-[node name="Block32" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, 1 )
-
-[node name="Block34" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -1, 1 )
-
-[node name="Block35" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -1, 2 )
-
-[node name="Block36" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 2 )
-
-[node name="Block37" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 2 )
-
-[node name="Block38" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, 2 )
-
-[node name="Block39" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -1, 2 )
-
-[node name="Block40" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -1, 2 )
-
-[node name="Block11" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -1, -4 )
-
-[node name="Block12" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -1, -4 )
-
-[node name="Block13" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, -1, -4 )
-
-[node name="Block14" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -1, -4 )
-
-[node name="Block15" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -1, -4 )
-
-[node name="Block" parent="Blocks" instance=ExtResource( 11 )]
+[node name="Block" parent="Blocks" instance=ExtResource( 9 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1, 0 )
 
-[node name="Block16" parent="Blocks" instance=ExtResource( 11 )]
+[node name="Block16" parent="Blocks" instance=ExtResource( 9 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1, 1 )
 
-[node name="Block27" parent="Blocks" instance=ExtResource( 11 )]
+[node name="Block27" parent="Blocks" instance=ExtResource( 9 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, -1, 1 )
 
-[node name="Block41" parent="Blocks" instance=ExtResource( 12 )]
+[node name="Block41" parent="Blocks" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
 
 [node name="Floor" type="RigidBody" parent="."]
-editor/display_folded = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0 )
 input_ray_pickable = false
 mode = 1
