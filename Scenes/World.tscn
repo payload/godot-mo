@@ -34,7 +34,7 @@ font_data = SubResource( 4 )
 [node name="World" type="Spatial"]
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 0.996195, -0.0368336, 0.0789899, 0, 0.906308, 0.422618, -0.0871557, -0.42101, 0.902859, 0, 4, 8 )
+transform = Transform( 0.996195, -0.0368336, 0.0789899, 0, 0.906308, 0.422618, -0.0871557, -0.42101, 0.902859, 1, 11, 22 )
 projection = 1
 size = 5.0
 script = ExtResource( 1 )
