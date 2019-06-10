@@ -44,7 +44,7 @@ public class ThingsHappen : Spatial
         var factory = collider as FactorySimple;
         var item = collider as GameItem;
         var block = collider as Block;
-        var just_floor = dude == null && factory == null && item == null;
+        var just_floor = dude == null && factory == null && item == null && block == null;
         var selected = Selection.Count > 0;
 
         if (leftClick && !shift && dude != null)

@@ -126,6 +126,11 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
     public void AddDuty(Duty duty) => Duties.Add(duty);
     private Assignment CreateAssignment(string name, Func<bool> func) => new SomeAssignment(name, () => AddDuty(func));
 
+    public Assignment GetDefaultAssignment(List<Assignment> assignments)
+    {
+        return assignments.Find((a) => a.Name == "Move");
+    }
+
     public List<Assignment> GetAssignmentsWith(RaycastResponse raycast)
     {
         var assignments = new List<Assignment>();
@@ -135,7 +140,7 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
         if (block != null)
             assignments.AddRange(GetBuildOnBlockAssignments(block));
         
-        // assignments.Add(CreateAssignment("Move", () => MoveTo(pos) && Stop()));
+        assignments.Add(CreateAssignment("Move", () => MoveTo(pos) && Stop()));
         
         return assignments;
     }

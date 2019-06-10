@@ -21,6 +21,8 @@ public interface DudeControl
     bool DropItem();
     void AddDuty(Func<bool> func);
     void AddDuty(Duty duty);
+
+    Assignment GetDefaultAssignment(List<Assignment> assignments);
     List<Assignment> GetAssignmentsWith(RaycastResponse raycast);
 }
 
