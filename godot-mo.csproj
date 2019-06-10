@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Code\CoalBlock.cs" />
     <Compile Include="Code\Drill.cs" />
+    <Compile Include="Code\DropBox.cs" />
     <Compile Include="Code\Dude.cs" />
     <Compile Include="Code\FactorySimple.cs" />
     <Compile Include="Code\GameItemBlock.cs" />

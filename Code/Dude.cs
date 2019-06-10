@@ -188,7 +188,16 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier, Con
         }
     }
 
-    public bool TakeItem(GameItem item) => inventory.Remove(item);
+    public bool TakeItem(GameItem item)
+    {
+        var hands = GetNode("Visual/Hands");
+        
+        if (item.Spatial.GetParent() == hands)
+            hands.RemoveChild(item.Spatial);
+
+        return inventory.Remove(item);
+    }
+
     public bool PutItem(GameItem item)
     {
         inventory.Add(item);

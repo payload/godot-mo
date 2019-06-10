@@ -180,6 +180,21 @@ public class ThingsHappen : Spatial
 
     public static Spatial InstantiateAt(Transform place, Resource resource, Node parent) =>
         InstantiateAt<Spatial>(place, resource, parent);
+    
+    public static void Reseat(Spatial it, Node newParent, Transform transform)
+    {
+        var owner = it.Owner;
+        var parent = it.GetParent();
+
+        if (parent != null) it.RemoveChild(it);
+        newParent.AddChild(it);
+
+        it.Owner = owner;
+        it.Transform = transform;
+    }
+
+    public static void Reseat(Spatial it, Node newParent) =>
+        Reseat(it, newParent, Transform.Identity);
 }
 
 class SomeAssignment : Assignment

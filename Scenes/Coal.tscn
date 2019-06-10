@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Code/GameItemBlock.cs" type="Script" id=1]
+[ext_resource path="res://Materials/Coal.tres" type="Material" id=2]
+
+[sub_resource type="SphereMesh" id=1]
+material = ExtResource( 2 )
+radius = 0.1
+height = 0.05
+radial_segments = 5
+rings = 3
+is_hemisphere = true
+
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 0.1, 0.025, 0.1 )
+
+[node name="Coal" type="RigidBody"]
+script = ExtResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0250715, 0 )
+shape = SubResource( 2 )

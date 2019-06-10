@@ -24,7 +24,8 @@ public class Drill : RigidBody, Container
 
     public void MineItem()
     {
-        var item = new SomeItem("Coal");
+        var scene = GD.Load<PackedScene>("res://Scenes/Coal.tscn");
+        var item = scene.Instance() as GameItemBlock;
         Items.Add(item);
     }
 
