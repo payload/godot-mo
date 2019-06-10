@@ -21,9 +21,9 @@ public class ThingsHappen : Spatial
         if (@event is InputEventKey key && key.IsPressed())
         {
             var number = key.Scancode - 48;
-            if (SelectableActions != null && number >= 0 && number < SelectableActions.Length)
+            if (Assignments != null && number >= 0 && number < Assignments.Count)
             {
-                SelectableActions[number]();
+                Assignments[number].Assign();
             }
         }
     }
@@ -43,6 +43,7 @@ public class ThingsHappen : Spatial
         var dude = collider as DudeControl;
         var factory = collider as FactorySimple;
         var item = collider as GameItem;
+        var block = collider as Block;
         var just_floor = dude == null && factory == null && item == null;
         var selected = Selection.Count > 0;
 
@@ -64,6 +65,8 @@ public class ThingsHappen : Spatial
             SelectionMoveToAnd(pos, (d) => d.PickUp(item));
         if (rightClick && ctrl && selected && just_floor)
             SelectionMoveToAnd(pos, (d) => d.DropItem());
+        if (rightClick && Selection.Count == 1 && block != null)
+            ShowPossibleAssignements(mousePos, raycast);
     }
 
     private void SelectAllDudesHere() {
@@ -92,15 +95,24 @@ public class ThingsHappen : Spatial
         SelectionAddDuty(func);
     }
 
-    Action[] SelectableActions;
+    //
+
+    IList<Assignment> Assignments;
+
+    private void ShowPossibleAssignements(Vector2 mousePos, RaycastResponse raycast)
+    {
+        var dude = Selection[0];
+        Assignments = dude.GetAssignmentsWith(raycast);
+        ShowSelectableActions(mousePos);
+    }
 
     private void ShowSelectableActions(Vector2 mousePos)
     {
         var list = GetNodeOrNull<ItemList>("/root/World/SelectableActions");
 
         list.Clear();
-        foreach (var action in SelectableActions)
-            list.AddItem(action.Method.Name);
+        foreach (var assignment in Assignments)
+            list.AddItem(assignment.Name);
 
         list.RectPosition = mousePos;
         list.Visible = true;
@@ -112,7 +124,7 @@ public class ThingsHappen : Spatial
 
         list.Visible = false;
 
-        SelectableActions[index]();
+        Assignments[index].Assign();
     }
 
     private async Task<RaycastResponse> RaycastThroughCamera(Vector2 pos)
@@ -153,47 +165,7 @@ public class ThingsHappen : Spatial
         Selection.Clear();
     }
 
-    private Assignment WantToConstructOnBlock(RaycastResponse response)
-    {
-        var builder = Selection.Find(IsBuilder);
-        if (builder != null &&
-            response.collider is Block block &&
-            block.Kind == BlockKind.Coal)
-        {
-            return new Assignment
-            {
-                Name = "ConstructDrill",
-                Dude = builder,
-                Duty = new SomeDuty(() => ConstructOnBlock(builder, block, new Drill()))
-            };
-        }
-        return null;
-    }
-
-    class Assignment
-    {
-        public string Name;
-        public DudeControl Dude;
-        public Duty Duty;
-    }
-
-    class Drill : Construction
-    {
-        public PackedScene Scene => GD.Load<PackedScene>("res://Scenes/Dude.tscn");
-    }
-
-    private bool IsBuilder(DudeControl dude) => true;
-
-    private bool ConstructOnBlock(DudeControl dude, Block block, Construction construction)
-    {
-        var dynamic = GetNode("/root/World/Dynamic");
-        return
-            dude.MoveTo(block.ConstructionPoint.origin) &&
-            dude.Stop() &&
-            InstantiateAt(block.ConstructionPoint, construction.Scene, dynamic) != null;
-    }
-
-    private T InstantiateAt<T>(Transform place, PackedScene scene, Node parent) where T : Spatial
+    public static T InstantiateAt<T>(Transform place, PackedScene scene, Node parent) where T : Spatial
     {
         var instance = scene.Instance() as T;
         instance.Transform = place;
@@ -201,6 +173,20 @@ public class ThingsHappen : Spatial
         return instance;
     }
 
-    private Spatial InstantiateAt(Transform place, PackedScene scene, Node parent) =>
+    public static Spatial InstantiateAt(Transform place, PackedScene scene, Node parent) =>
         InstantiateAt<Spatial>(place, scene, parent);
+}
+
+class SomeAssignment : Assignment
+{
+    Action Action;
+    public String Name { get; set; }
+
+    public void Assign() => Action();
+
+    public SomeAssignment(string name, Action action)
+    {
+        Name = name;
+        Action = action;
+    }
 }

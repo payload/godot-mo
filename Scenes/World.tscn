@@ -57,9 +57,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 6 )
 [node name="FloorTile2" parent="Tiles" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0 )
 
-[node name="FloorTile29" parent="Tiles" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2 )
-
 [node name="FloorTile30" parent="Tiles" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 4 )
 
@@ -236,7 +233,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -1, -4 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -1, -4 )
 
 [node name="Block16" parent="Blocks" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5795, -1, 1 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4205, -1, 1 )
 script = ExtResource( 11 )
 
 [node name="Block12" parent="Blocks" instance=ExtResource( 9 )]

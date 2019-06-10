@@ -20,6 +20,7 @@ public interface DudeControl
     bool DropItem();
     void AddDuty(Func<bool> func);
     void AddDuty(Duty duty);
+    List<Assignment> GetAssignmentsWith(RaycastResponse raycast);
 }
 
 public interface HasVisibilityNotifier
@@ -56,6 +57,7 @@ public interface Block
     Spatial Spatial { get; }
     Transform ConstructionPoint { get; }
     BlockKind Kind { get; }
+    PackedScene[] PossibleBuildings { get; }
 }
 
 public enum BlockKind { Undefined, Coal, Iron, Wood }
@@ -63,4 +65,11 @@ public enum BlockKind { Undefined, Coal, Iron, Wood }
 public interface Construction
 {
     PackedScene Scene { get; }
+}
+
+public interface Assignment
+{
+    string Name { get; }
+    
+    void Assign();
 }

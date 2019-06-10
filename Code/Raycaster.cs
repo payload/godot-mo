@@ -9,7 +9,7 @@ struct Raycast
     public TaskCompletionSource<RaycastResponse> Promise;
 }
 
-struct RaycastResponse
+public struct RaycastResponse
 {
     public Node collider;
     public int collider_id;

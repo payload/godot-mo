@@ -125,6 +125,33 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
     public void AddDuty(Func<bool> func) => AddDuty(new SomeDuty(func));
     public void AddDuty(Duty duty) => Duties.Add(duty);
 
+    public List<Assignment> GetAssignmentsWith(RaycastResponse raycast)
+    {
+        var assignments = new List<Assignment>();
+        var pos = raycast.position;
+        var block = raycast.collider as Block;
+
+        if (block != null)
+            assignments.AddRange(GetBuildOnBlockAssignments(block));
+        
+        return assignments;
+    }
+
+    //
+
+    private IEnumerable<Assignment> GetBuildOnBlockAssignments(Block block) {
+        foreach (var building in block.PossibleBuildings)
+            yield return new SomeAssignment(
+                "Build " + building.GetPath().ReplaceN("res://", "").BaseName(),
+                () => AddDuty(() => BuildOnBlock(block, building))
+            );
+    }
+
+    private bool BuildOnBlock(Block block, PackedScene building) =>
+        MoveTo(block.ConstructionPoint.origin) &&
+        Stop() &&
+        ThingsHappen.InstantiateAt(block.ConstructionPoint, building, GetParent()) != null;
+
     // Colorful
 
     MeshInstance VisualBody { get => GetNode<MeshInstance>("Visual/Body"); }
