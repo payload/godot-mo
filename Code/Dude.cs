@@ -124,6 +124,7 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
 
     public void AddDuty(Func<bool> func) => AddDuty(new SomeDuty(func));
     public void AddDuty(Duty duty) => Duties.Add(duty);
+    private Assignment CreateAssignment(string name, Func<bool> func) => new SomeAssignment(name, () => AddDuty(func));
 
     public List<Assignment> GetAssignmentsWith(RaycastResponse raycast)
     {
@@ -134,6 +135,8 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
         if (block != null)
             assignments.AddRange(GetBuildOnBlockAssignments(block));
         
+        // assignments.Add(CreateAssignment("Move", () => MoveTo(pos) && Stop()));
+        
         return assignments;
     }
 
@@ -141,13 +144,15 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
 
     private IEnumerable<Assignment> GetBuildOnBlockAssignments(Block block) {
         foreach (var building in block.PossibleBuildings)
-            yield return new SomeAssignment(
+        {
+            yield return CreateAssignment(
                 "Build " + building.GetPath().ReplaceN("res://", "").BaseName(),
-                () => AddDuty(() => BuildOnBlock(block, building))
+                () => BuildOnBlock(block, building)
             );
+        }
     }
 
-    private bool BuildOnBlock(Block block, PackedScene building) =>
+    private bool BuildOnBlock(Block block, Resource building) =>
         MoveTo(block.ConstructionPoint.origin) &&
         Stop() &&
         ThingsHappen.InstantiateAt(block.ConstructionPoint, building, GetParent()) != null;

@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -57,7 +58,7 @@ public interface Block
     Spatial Spatial { get; }
     Transform ConstructionPoint { get; }
     BlockKind Kind { get; }
-    PackedScene[] PossibleBuildings { get; }
+    Array<PackedScene> PossibleBuildings { get; }
 }
 
 public enum BlockKind { Undefined, Coal, Iron, Wood }

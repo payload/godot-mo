@@ -55,6 +55,7 @@
     <Compile Include="Code\GameItemBlock.cs" />
     <Compile Include="Code\PlayerAgent.cs" />
     <Compile Include="Code\RtsCamera.cs" />
+    <Compile Include="Code\SomeBlock.cs" />
     <Compile Include="Code\ThingsHappen.cs" />
     <Compile Include="Code\Interfaces.cs" />
     <Compile Include="Code\HelperImplementations.cs" />

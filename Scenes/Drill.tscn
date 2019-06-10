@@ -1,0 +1,61 @@
+[gd_scene load_steps=5 format=2]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.439216, 0.313726, 0.690196, 1 )
+
+[sub_resource type="CylinderMesh" id=2]
+material = SubResource( 1 )
+top_radius = 0.1
+bottom_radius = 0.3
+height = 0.5
+radial_segments = 6
+rings = 1
+
+[sub_resource type="Animation" id=3]
+resource_name = "Drilling"
+length = 0.8
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0.25, 0 ), Vector3( 0, 0.2, 0 ), Vector3( 0, 0.25, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( -180, 0, 0 ), Vector3( -180, 180, 0 ), Vector3( -180, 360, 0 ) ]
+}
+
+[sub_resource type="CylinderShape" id=4]
+radius = 0.4
+height = 0.5
+
+[node name="Drill" type="RigidBody"]
+mode = 1
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 0.905762, -3.70486e-08, 0.423787, 0, -1, -8.74228e-08, 0.423787, 7.91842e-08, -0.905762, 0, 0.25, 0 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MeshInstance"]
+autoplay = "Drilling"
+anims/Drilling = SubResource( 3 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0 )
+shape = SubResource( 4 )

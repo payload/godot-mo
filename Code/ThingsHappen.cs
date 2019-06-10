@@ -165,16 +165,17 @@ public class ThingsHappen : Spatial
         Selection.Clear();
     }
 
-    public static T InstantiateAt<T>(Transform place, PackedScene scene, Node parent) where T : Spatial
+    public static T InstantiateAt<T>(Transform place, Resource resource, Node parent) where T : Spatial
     {
+        var scene = GD.Load<PackedScene>(resource.GetPath());
         var instance = scene.Instance() as T;
         instance.Transform = place;
         parent.AddChild(instance);
         return instance;
     }
 
-    public static Spatial InstantiateAt(Transform place, PackedScene scene, Node parent) =>
-        InstantiateAt<Spatial>(place, scene, parent);
+    public static Spatial InstantiateAt(Transform place, Resource resource, Node parent) =>
+        InstantiateAt<Spatial>(place, resource, parent);
 }
 
 class SomeAssignment : Assignment
