@@ -1,13 +1,13 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Code/SomeBlock.cs" type="Script" id=1]
-[ext_resource path="res://Scenes/Buildings/Drill.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/Buildings/DropBox.tscn" type="PackedScene" id=2]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 1, 1, 1 )
 
 [sub_resource type="SpatialMaterial" id=2]
-albedo_color = Color( 0, 0, 0, 1 )
+albedo_color = Color( 0.772549, 0.592157, 0.592157, 1 )
 
 [sub_resource type="BoxShape" id=3]
 extents = Vector3( 0.5, 0.5, 0.5 )
@@ -15,8 +15,7 @@ extents = Vector3( 0.5, 0.5, 0.5 )
 [node name="Block" type="RigidBody"]
 mode = 1
 script = ExtResource( 1 )
-Kind = 1
-PossibleBuildings = [ ExtResource( 2 ), null, null ]
+PossibleBuildings = [ ExtResource( 2 ), null ]
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )

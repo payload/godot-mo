@@ -150,6 +150,7 @@ public class Dude : RigidBody, Colorful, DudeControl, HasVisibilityNotifier
     private IEnumerable<Assignment> GetBuildOnBlockAssignments(Block block) {
         foreach (var building in block.PossibleBuildings)
         {
+            if (building == null) continue;
             yield return CreateAssignment(
                 "Build " + building.GetPath().ReplaceN("res://", "").BaseName(),
                 () => BuildOnBlock(block, building)

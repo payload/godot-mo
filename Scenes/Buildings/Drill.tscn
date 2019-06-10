@@ -48,7 +48,7 @@ height = 0.5
 mode = 1
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( -0.617216, -6.87837e-08, 0.786794, 0, -1, -8.74228e-08, 0.786794, -5.39587e-08, 0.617216, 0, 0.25, 0 )
+transform = Transform( -0.893399, -3.9276e-08, 0.449265, 0, -1, -8.74228e-08, 0.449265, -7.81034e-08, 0.893399, 0, 0.244916, 0 )
 mesh = SubResource( 2 )
 material/0 = null
 

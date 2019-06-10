@@ -1,35 +1,36 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://Code/RtsCamera.cs" type="Script" id=1]
 [ext_resource path="res://Scenes/Factory.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Code/FactorySimple.cs" type="Script" id=3]
 [ext_resource path="res://Scenes/GameItemBlock.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Scenes/Drill.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Scenes/Buildings/Drill.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Code/PlayerAgent.cs" type="Script" id=6]
 [ext_resource path="res://Code/ThingsHappen.cs" type="Script" id=7]
 [ext_resource path="res://Code/Raycaster.cs" type="Script" id=8]
 [ext_resource path="res://Scenes/Block.tscn" type="PackedScene" id=9]
 [ext_resource path="res://Materials/ColorViolet.tres" type="Material" id=10]
 [ext_resource path="res://Scenes/Blocks/CoalBlock.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Scenes/Blocks/SomeBlock.tscn" type="PackedScene" id=12]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 50, 0.1, 50 )
 
-[sub_resource type="SpatialMaterial" id=5]
+[sub_resource type="SpatialMaterial" id=2]
 albedo_color = Color( 0.219608, 0.219608, 0.219608, 1 )
 
-[sub_resource type="PlaneMesh" id=6]
-material = SubResource( 5 )
+[sub_resource type="PlaneMesh" id=3]
+material = SubResource( 2 )
 size = Vector2( 100, 100 )
 
-[sub_resource type="StyleBoxEmpty" id=2]
+[sub_resource type="StyleBoxEmpty" id=4]
 
-[sub_resource type="DynamicFontData" id=4]
+[sub_resource type="DynamicFontData" id=5]
 font_path = "res://Assets/Ubuntu-R.ttf"
 
-[sub_resource type="DynamicFont" id=3]
+[sub_resource type="DynamicFont" id=6]
 outline_size = 1
-font_data = SubResource( 4 )
+font_data = SubResource( 5 )
 
 [node name="World" type="Spatial"]
 
@@ -62,6 +63,7 @@ shadow_enabled = true
 [node name="Dynamic" type="Node" parent="."]
 
 [node name="Drill" parent="Dynamic" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 0 )
 
 [node name="PlayerAgent" type="Node" parent="."]
 script = ExtResource( 6 )
@@ -190,15 +192,19 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -1, -4 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -1, -4 )
 
 [node name="Block" parent="Blocks" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1, 0 )
 
 [node name="Block16" parent="Blocks" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 1 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1, 1 )
 
 [node name="Block27" parent="Blocks" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 1 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, -1, 1 )
+
+[node name="Block41" parent="Blocks" instance=ExtResource( 12 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
 
 [node name="Floor" type="RigidBody" parent="."]
+editor/display_folded = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0 )
 input_ray_pickable = false
 mode = 1
@@ -208,15 +214,15 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0 )
 shape = SubResource( 1 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Floor"]
-mesh = SubResource( 6 )
+mesh = SubResource( 3 )
 material/0 = null
 
 [node name="SelectableActions" type="ItemList" parent="."]
 anchor_right = 1.0
 margin_right = -40.0
 margin_bottom = 40.0
-custom_styles/bg = SubResource( 2 )
-custom_fonts/font = SubResource( 3 )
+custom_styles/bg = SubResource( 4 )
+custom_fonts/font = SubResource( 6 )
 custom_colors/font_color_selected = Color( 0, 0, 0, 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 max_text_lines = 10
