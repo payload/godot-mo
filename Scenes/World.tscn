@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://Code/RtsCamera.cs" type="Script" id=1]
 [ext_resource path="res://Scenes/Factory.tscn" type="PackedScene" id=2]
@@ -10,6 +10,12 @@
 [ext_resource path="res://Code/Raycaster.cs" type="Script" id=8]
 [ext_resource path="res://Scenes/Blocks/CoalBlock.tscn" type="PackedScene" id=9]
 [ext_resource path="res://Scenes/Blocks/SomeBlock.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Code/AreaGenerator.cs" type="Script" id=11]
+
+[sub_resource type="OpenSimplexNoise" id=7]
+seed = 42
+octaves = 2
+period = 8.0
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 50, 0.1, 50 )
@@ -89,6 +95,14 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, -1, 1 )
 
 [node name="Block41" parent="Blocks" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+
+[node name="AreaGenerator" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+script = ExtResource( 11 )
+scene = ExtResource( 9 )
+Noise = SubResource( 7 )
+Min = 0.4
+Max = 1.0
 
 [node name="Floor" type="RigidBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0 )

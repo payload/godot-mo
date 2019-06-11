@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class GameItemBlock : Spatial, GameItem
+public class GameItemBlock : RigidBody, GameItem
 {
     public Spatial Spatial => this;
 

@@ -15,12 +15,6 @@ public class DropBox : Spatial, Container
         {
             var transform = GetNode<Spatial>("Drop").Transform;
             ThingsHappen.Reseat(spatial, this, transform);
-            if (item is RigidBody rb)
-                rb.ApplyTorqueImpulse(new Vector3(Rand(), Rand(), Rand()));
-
-            float Rand() {
-                return (float)GD.Randf();
-            }
         }
 
         items.Add(item);

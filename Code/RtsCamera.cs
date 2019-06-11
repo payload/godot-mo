@@ -26,6 +26,6 @@ public class RtsCamera : Camera
         if (Input.IsActionPressed("zoom_in"))
             Size = Mathf.Max(3, Size * 0.9F);
         if (Input.IsActionPressed("zoom_out"))
-            Size = Mathf.Min(12, Size * 1.1F);
+            Size = Mathf.Min(float.MaxValue, Size * 1.1F);
     }
 }

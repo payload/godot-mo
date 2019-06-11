@@ -49,6 +49,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\AreaGenerator.cs" />
     <Compile Include="Code\CoalBlock.cs" />
     <Compile Include="Code\Drill.cs" />
     <Compile Include="Code\DropBox.cs" />
